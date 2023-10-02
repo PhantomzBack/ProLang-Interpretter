@@ -2,17 +2,14 @@
 #include<stdlib.h>
 #include<string.h>
 #include<stdbool.h>
+#include "expression_evaluator.h"
 //12*(8+3-4)
-typedef struct {
-    char denotion_char;
-    unsigned char precedence;
-}operator;
-#define OPERATOR_LIST_LENGTH 4
-#define HIGHEST_OPERATOR_PRECEDENCE 1
+
+
 
 
 /*TODO: Build functions to skip over character strings and all, character string should be innermost skipping thing, above which can be parentheses. I.e, '(' will skip the over the bracket but ('') should not skip over the character string */
-const operator operator_list[]={{'*',1},{'/',1}, {'+',0},{'-',0}};
+const pro_operator operator_list[]={{'*',1},{'/',1}, {'+',0},{'-',0}};
 bool valid_character(char x){
     return 1;
 }
@@ -44,11 +41,9 @@ int eval(int val1, int val2, char denotion_char)
 /*Return the next index after crossing the matching closing parentheses*/
 int skip_parentheses(char* eval_string, int str_ptr){
     str_ptr++;
-    printf("Received %s\n", eval_string);
     while(eval_string[str_ptr]!='\0'){
         if(eval_string[str_ptr]=='('){
             str_ptr=skip_parentheses(eval_string, str_ptr)-1;
-            printf("Got back:%d\n", str_ptr);
             if(str_ptr==-1){
                 return -1;
             }
@@ -64,7 +59,7 @@ int skip_parentheses(char* eval_string, int str_ptr){
 
 
 /*Slice string to new one, with start index included, end not included, also get rid of unnecessary characters*/
-char* copy_string(char* orig_str, int start_index, int end_index, int num_args, char* remove_char_args)
+/*char* copy_string(char* orig_str, int start_index, int end_index, int num_args, char* remove_char_args)
 {
     if(num_args==0){
         char* new_string= (char*)malloc(end_index-start_index+1);
@@ -112,11 +107,10 @@ char* copy_string(char* orig_str, int start_index, int end_index, int num_args, 
         char* new_string=(char*)malloc(new_length);
         //for(int i=start_index; i!=end_index)
     }*/
-}
+//}
 
 
 int eval_expr(char* eval_string, int str_ptr){
-    printf("The string I recieved was %s\n", eval_string);
     int current_operator_position=-1, lowest_operator_precedence=HIGHEST_OPERATOR_PRECEDENCE+1, num_operators=0;
     char current_operator;
     while(eval_string[str_ptr]!='\0'){
@@ -124,7 +118,6 @@ int eval_expr(char* eval_string, int str_ptr){
         }
         else if(eval_string[str_ptr]=='('){
             str_ptr=skip_parentheses(eval_string, str_ptr);
-            printf("Str ptr is %d\n", str_ptr);
             //return 0;
             if(str_ptr==-1){
                 printf("Bracket mismatch, couldn't find closing bracket!");
@@ -134,7 +127,7 @@ int eval_expr(char* eval_string, int str_ptr){
         }
         else{
         for(int j=0;j!=OPERATOR_LIST_LENGTH; j++){
-            /*<= used in next statement to evaluate 12/2*4 as 12/2 * 4, else left most operator would have lesser precedence*/
+            /*<= used in next statement to evaluate 12/2*4 as 12/2 * 4, else left most pro_operator would have lesser precedence*/
             if(eval_string[str_ptr]==operator_list[j].denotion_char && operator_list[j].precedence<=lowest_operator_precedence){
                 lowest_operator_precedence=operator_list[j].precedence;
                 current_operator_position=str_ptr;
@@ -147,12 +140,10 @@ int eval_expr(char* eval_string, int str_ptr){
         }
         str_ptr++;
     }
-    printf("Current operator position: %d\n", current_operator_position);
     if(num_operators==0){
 
         //TODO: Eval expression with shortened string instead of creating new memory space
         if(eval_string[0]=='('){
-            printf("Here with string: %s\n", eval_string);
             return eval_expr(copy_string(eval_string, 1, str_ptr-1, 1, " "), 0);
         }
         else{
@@ -176,7 +167,6 @@ int eval_expr(char* eval_string, int str_ptr){
         }
         val2_str[str_ptr-current_operator_position-1]='\0';*/
         int x=eval(eval_expr(val1_str, 0), eval_expr(val2_str, 0), current_operator);
-        //printf("\nEvaluating: %s as %s, %s and it is %d\n", eval_string,val1_str, val2_str, x);
         free(val1_str);
         free(val2_str);
         return x;
@@ -199,7 +189,6 @@ int eval_expr(char* eval_string, int str_ptr){
         }
         val2_str[str_ptr-current_operator_position-1]='\0';
         printf("\nEvaluating: %s as %s, %s\n", eval_string,val1_str, val2_str);*/
-        printf("The eval results are %d, %d", eval_expr(val1_str,0),eval_expr(val2_str,0));
         int x=eval(eval_expr(val1_str,0),eval_expr(val2_str,0), current_operator);
         free(val1_str);
         free(val2_str);
@@ -217,7 +206,7 @@ int eval_expr_old(char* eval_string, int str_ptr){
             if(eval_string[str_ptr]==operator_list[j].denotion_char && operator_list[j].precedence>highest_precedence){
                 current_operator_position=str_ptr;
                 current_operator=operator_list[j].denotion_char;
-                prev_operator_position=prev_operator_position_dynamic; // to store the value when a possible highest precendce operator is found.
+                prev_operator_position=prev_operator_position_dynamic; // to store the value when a possible highest precendce pro_operator is found.
                 next_operator_position=-1;
                 highest_precedence=operator_list[j].precedence;
                 break;
@@ -240,13 +229,8 @@ int eval_expr_old(char* eval_string, int str_ptr){
 }
 */
 
-int main(){
-    char x[1000];//="((173/(5+7-3*(12-11))+3)";
-    //printf("%s", copy_string(x, 1, 5));
-
+/*int main(){
+    char x[1000];
     scanf("%s", x);
-    printf("\n Expression evaluated to: %d", eval_expr(x,0));
-
-    //printf("%s", copy_string("ravi arora", 1, 7, 5," avir"));
-}
-
+    printf("%d", eval_expr(x, 0));
+}*/
