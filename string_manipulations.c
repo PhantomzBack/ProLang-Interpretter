@@ -24,7 +24,7 @@ unsigned char segregate_as_i_v_f(char* input_str){
     bool integer=true, function=false;
     for(size_t i = 0; i < strlen(input_str); i++)
     {
-        if(!(input_str[i]>='0' && input_str[i]<='0')){
+        if(!(input_str[i]>='0' && input_str[i]<='9')){
             integer=false;
         }
         if(input_str[i]=='('){

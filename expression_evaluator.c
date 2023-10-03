@@ -3,6 +3,11 @@
 #include<string.h>
 #include<stdbool.h>
 #include "expression_evaluator.h"
+#include "string_manipulations.h"
+#include "variable.h"
+#include "interpretter.h"
+
+extern struct variable_names *current_scope_variable_names;
 //12*(8+3-4)
 
 
@@ -141,13 +146,37 @@ int eval_expr(char* eval_string, int str_ptr){
         str_ptr++;
     }
     if(num_operators==0){
-
+        printf("Here\n");
         //TODO: Eval expression with shortened string instead of creating new memory space
         if(eval_string[0]=='('){
             return eval_expr(copy_string(eval_string, 1, str_ptr-1, 1, " "), 0);
         }
         else{
-            return atoi(eval_string);
+            unsigned char x=segregate_as_i_v_f(eval_string);
+            if(x){
+                if(x==1){
+                    //Integer
+                    return atoi(eval_string);
+                }
+                else if(x==2){
+                    //Variable
+                    struct variable *x=get_variable_value_ptr(eval_string, current_scope_variable_names);
+                    if(x!=NULL){
+                        return x->val;
+                    }
+                    else{
+                        printf("\nVariable named %s not found", eval_string);
+                        exit(23);
+                    }
+
+                }
+                else{
+                    return -1;
+                }
+            }
+            else{
+                exit(23);
+            }
         }
     }
     else if(num_operators==1){
